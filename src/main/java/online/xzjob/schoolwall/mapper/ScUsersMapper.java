@@ -1,6 +1,7 @@
 package online.xzjob.schoolwall.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import online.xzjob.schoolwall.dto.ScUserDTO;
 import online.xzjob.schoolwall.entity.ScUsers;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -10,5 +11,8 @@ Mapper 接口通常与 XML 文件或注解一起使用，以提供 SQL 语句和
 
 @Mapper   //标记为Mybatis的 Mapper 接口
 public interface ScUsersMapper extends BaseMapper<ScUsers> {
+
+    @Select("SELECT id, username, email FROM sc_users WHERE id = #{id}")
+    ScUserDTO selectUserByIdWithoutPassword(Integer id);
 
 }

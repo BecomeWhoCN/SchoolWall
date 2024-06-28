@@ -82,18 +82,30 @@ public class ScUsersServiceImpl extends ServiceImpl<ScUsersMapper, ScUsers> impl
         //
         OperationResult<ScUserDTO> result = new OperationResult<>();
 
-        if (user != null) {
+        if (user == null) {
+            result.setSuccess(false);
+            result.setMessage("用户不存在或未找到");
+        } else {
+
+            if (user.getUserOnlineStatus() == "away"){
+                result.setSuccess(false);
+                result.setMessage("用户已被注销");
+            }
+
             ScUserDTO scUserDTO = new ScUserDTO();
             scUserDTO.setUserId(user.getUserId());
             scUserDTO.setUserEmail(user.getUserEmail());
             scUserDTO.setUserRole(user.getUserRole());
+            scUserDTO.setUserBio(user.getUserBio());
+            scUserDTO.setUserClass(user.getUserClass());
+            scUserDTO.setUserGender(user.getUserGender());
+            scUserDTO.setUserName(user.getUserName());
+            scUserDTO.setUserPhone(user.getUserPhone());
+            scUserDTO.setUserOnlineStatus(user.getUserOnlineStatus());
 
             result.setSuccess(true);
             result.setMessage("用户存在，正在登陆");
             result.setData(scUserDTO);
-        } else {
-            result.setSuccess(false);
-            result.setMessage("用户不存在或未找到");
         }
         return result;
     }

@@ -78,6 +78,13 @@
 			<version>RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
+
+		<!--七牛云对象存储-->
+		<dependency>
+			<groupId>com.qiniu</groupId>
+			<artifactId>qiniu-java-sdk</artifactId>
+			<version>7.7.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

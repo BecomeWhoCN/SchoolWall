@@ -13,4 +13,12 @@ public class ScUserDTO {
     private Integer userId;
     private String userEmail;
     private String userRole;
+
+    private String userName;
+    private String userBio;
+    private String userPhone;
+    private String userGender;
+    private String userClass;
+
+    private String userOnlineStatus;
 }
