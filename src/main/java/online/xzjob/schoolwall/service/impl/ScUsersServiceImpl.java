@@ -11,7 +11,6 @@ import online.xzjob.schoolwall.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
 
 /**
@@ -202,5 +201,59 @@ public class ScUsersServiceImpl extends ServiceImpl<ScUsersMapper, ScUsers> impl
 
         return result;
     }
+
+    // 用户忘记密码 /api/scUsers/update_lostPasswd
+    @Override
+    public OperationResult<ScUserDTO> updateLostPasswd(String phone, String email, String newPasswd) {
+        OperationResult<ScUserDTO> result = new OperationResult<>();
+
+        // 检查手机和邮箱是否存在
+        QueryWrapper<ScUsers> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_phone", phone);
+        queryWrapper.eq("user_email", email);
+
+        ScUsers user = scUsersMapper.selectOne(queryWrapper);
+        if (user == null) {
+            result.setSuccess(false);
+            result.setMessage("手机或邮箱不存在");
+            return result;
+        }
+
+        // 检查新密码格式
+        String PasswdRegex = "^(?=.*[^0-9])[A-Za-z\\d!@#$%^&*()_+]{7,}$";
+        Pattern pattern = Pattern.compile(PasswdRegex);
+
+        if (!pattern.matcher(newPasswd).matches()) {
+            result.setSuccess(false);
+            result.setMessage("密码格式不正确，密码大于6位并且至少要有一个非数字字符");
+            return result;
+        }
+
+        // 加密新密码
+        String newPasswordHash = PasswordUtil.get_jmPasswd(newPasswd, PasswordUtil.SaltValue.getBytes());
+
+        // 更新数据库
+        user.setUserPasswordHash(newPasswordHash);
+        int updateResult = scUsersMapper.updateById(user);
+
+        if (updateResult > 0) {
+            result.setSuccess(true);
+            result.setMessage("密码更新成功");
+
+            // 构建返回的 DTO
+            ScUserDTO scUserDTO = new ScUserDTO();
+            scUserDTO.setUserId(user.getUserId());
+            scUserDTO.setUserEmail(user.getUserEmail());
+            scUserDTO.setUserRole(user.getUserRole());
+
+            result.setData(scUserDTO);
+        } else {
+            result.setSuccess(false);
+            result.setMessage("密码更新失败，请稍后再试");
+        }
+
+        return result;
+    }
+
 
 }

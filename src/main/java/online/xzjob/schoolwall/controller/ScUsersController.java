@@ -47,5 +47,10 @@ public class ScUsersController {
         return scUsersService.updateUserPassword(id,oldPasswd,newPasswd);
     }
 
+    @PostMapping("/update_lostPasswd")
+    public OperationResult<ScUserDTO> updateLostPasswd(@RequestParam String phone, @RequestParam String email, @RequestParam String newPasswd) {
+        return scUsersService.updateLostPasswd(phone,email,newPasswd);
+    }
+
 
 }

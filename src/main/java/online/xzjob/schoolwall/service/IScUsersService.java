@@ -29,4 +29,7 @@ public interface IScUsersService extends IService<ScUsers> {
 
     // 更新用户密码
     OperationResult<ScUserDTO> updateUserPassword(Integer id, String oldPassword, String newPassword);
+
+    OperationResult<ScUserDTO> updateLostPasswd(String phone, String email, String newPasswd);
+
 }
