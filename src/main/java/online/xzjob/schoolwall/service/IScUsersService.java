@@ -4,6 +4,7 @@ import online.xzjob.schoolwall.dto.ScUserDTO;
 import online.xzjob.schoolwall.entity.ScUsers;
 import com.baomidou.mybatisplus.extension.service.IService;
 import online.xzjob.schoolwall.util.OperationResult;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>

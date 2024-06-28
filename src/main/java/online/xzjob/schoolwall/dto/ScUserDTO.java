@@ -21,4 +21,8 @@ public class ScUserDTO {
     private String userClass;
 
     private String userOnlineStatus;
+
+    private String userAvatar;
+
+    private String scUserAvatars;
 }

@@ -1,16 +1,25 @@
 package online.xzjob.schoolwall.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.qiniu.common.QiniuException;
 import online.xzjob.schoolwall.dto.ScUserDTO;
+import online.xzjob.schoolwall.entity.ScUserAvatars;
 import online.xzjob.schoolwall.entity.ScUsers;
+import online.xzjob.schoolwall.mapper.ScUserAvatarsMapper;
 import online.xzjob.schoolwall.mapper.ScUsersMapper;
 import online.xzjob.schoolwall.service.IScUsersService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import online.xzjob.schoolwall.util.ImageCompressor;
 import online.xzjob.schoolwall.util.OperationResult;
 import online.xzjob.schoolwall.util.PasswordUtil;
+import online.xzjob.schoolwall.util.QiniuUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -24,6 +33,9 @@ public class ScUsersServiceImpl extends ServiceImpl<ScUsersMapper, ScUsers> impl
 
     @Autowired
     private ScUsersMapper scUsersMapper;
+
+    @Autowired
+    private ScUserAvatarsMapper scUserAvatarsMapper;
 
     // 创建用户 /api/scUsers/create_scuser
     public OperationResult<ScUserDTO> createUser(ScUsers user) {
@@ -73,40 +85,49 @@ public class ScUsersServiceImpl extends ServiceImpl<ScUsersMapper, ScUsers> impl
         return result;
     }
 
-    // 查询用户(根据用户id) /api/scUsers/get_scuserbyid/{userId}
     @Override
     public OperationResult<ScUserDTO> getUserById(Integer userId) {
+        OperationResult<ScUserDTO> result = new OperationResult<>();
 
         // 检查用户是否存在
         ScUsers user = scUsersMapper.selectById(userId);
-        //
-        OperationResult<ScUserDTO> result = new OperationResult<>();
 
         if (user == null) {
             result.setSuccess(false);
             result.setMessage("用户不存在或未找到");
-        } else {
-
-            if (user.getUserOnlineStatus() == "away"){
-                result.setSuccess(false);
-                result.setMessage("用户已被注销");
-            }
-
-            ScUserDTO scUserDTO = new ScUserDTO();
-            scUserDTO.setUserId(user.getUserId());
-            scUserDTO.setUserEmail(user.getUserEmail());
-            scUserDTO.setUserRole(user.getUserRole());
-            scUserDTO.setUserBio(user.getUserBio());
-            scUserDTO.setUserClass(user.getUserClass());
-            scUserDTO.setUserGender(user.getUserGender());
-            scUserDTO.setUserName(user.getUserName());
-            scUserDTO.setUserPhone(user.getUserPhone());
-            scUserDTO.setUserOnlineStatus(user.getUserOnlineStatus());
-
-            result.setSuccess(true);
-            result.setMessage("用户存在，正在登陆");
-            result.setData(scUserDTO);
+            return result;
         }
+        if ("away".equals(user.getUserOnlineStatus())) {
+            result.setSuccess(false);
+            result.setMessage("用户已被注销");
+            return result;
+        }
+
+        // 查询用户头像
+        QueryWrapper<ScUserAvatars> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        ScUserAvatars scUserAvatars = scUserAvatarsMapper.selectOne(queryWrapper);
+
+        ScUserDTO scUserDTO = new ScUserDTO();
+        scUserDTO.setUserId(user.getUserId());
+        scUserDTO.setUserEmail(user.getUserEmail());
+        scUserDTO.setUserRole(user.getUserRole());
+        scUserDTO.setUserBio(user.getUserBio());
+        scUserDTO.setUserClass(user.getUserClass());
+        scUserDTO.setUserGender(user.getUserGender());
+        scUserDTO.setUserName(user.getUserName());
+        scUserDTO.setUserPhone(user.getUserPhone());
+        scUserDTO.setUserOnlineStatus(user.getUserOnlineStatus());
+        if (scUserAvatars != null) {
+            scUserDTO.setScUserAvatars(scUserAvatars.getAvatarUrl());
+        } else {
+            scUserDTO.setScUserAvatars(null);  // 或者设置一个默认头像URL
+        }
+
+        result.setSuccess(true);
+        result.setMessage("用户存在，正在登陆");
+        result.setData(scUserDTO);
+
         return result;
     }
 
@@ -266,6 +287,5 @@ public class ScUsersServiceImpl extends ServiceImpl<ScUsersMapper, ScUsers> impl
 
         return result;
     }
-
 
 }

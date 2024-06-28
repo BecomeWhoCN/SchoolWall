@@ -6,7 +6,9 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
+import org.springframework.stereotype.Service;
 
+@Service
 public class QiniuUploadService {
 
     // AC秘钥
@@ -22,24 +24,37 @@ public class QiniuUploadService {
 
     // 创建上传对象
     private final UploadManager uploadManager;
-
     private final Auth auth;
 
-
     public QiniuUploadService() {
-        Configuration cfg = new Configuration(Region.region0()); // 根据你的实际存储区域选择
+        Configuration cfg = new Configuration(Region.region2()); // 根据你的实际存储区域选择
         this.uploadManager = new UploadManager(cfg);
         this.auth = Auth.create(ACCESS_KEY, SECRET_KEY);
     }
 
     // 上传文件
-    public String QnUpdataFile(String localFilePath, String fileName) throws QiniuException {
+    public String QnUpdataFile(String localFilePath, String fileName, String storagePath) throws QiniuException {
+        String fullPath = storagePath.endsWith("/") ? storagePath + fileName : storagePath + "/" + fileName;
         String upToken = auth.uploadToken(BUCKET_NAME);
-        Response response = uploadManager.put(localFilePath, fileName, upToken);
+        Response response = uploadManager.put(localFilePath, fullPath, upToken);
 
         // 解析上传成功的结果
         if (response.isOK()) {
-            return DOMAIN + "/" + fileName;
+            return "http://" + DOMAIN + "/" + fullPath;
+        } else {
+            throw new QiniuException(response);
+        }
+    }
+
+    // 上传字节数组文件
+    public String uploadFile(byte[] fileBytes, String fileName, String storagePath) throws QiniuException {
+        String fullPath = storagePath.endsWith("/") ? storagePath + fileName : storagePath + "/" + fileName;
+        String upToken = auth.uploadToken(BUCKET_NAME);
+        Response response = uploadManager.put(fileBytes, fullPath, upToken);
+
+        // 解析上传成功的结果
+        if (response.isOK()) {
+            return "http://" + DOMAIN + "/" + fullPath;
         } else {
             throw new QiniuException(response);
         }
