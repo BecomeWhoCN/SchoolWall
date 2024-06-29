@@ -288,4 +288,35 @@ public class ScUsersServiceImpl extends ServiceImpl<ScUsersMapper, ScUsers> impl
         return result;
     }
 
+    // 根据用户id修改用户的账号状态  /api/scUsers/update_userStatus
+    @Override
+    public OperationResult<ScUserDTO> updateUserStatus(Integer id, String userPasswd) {
+        OperationResult<ScUserDTO> result = new OperationResult<>();
+
+        // 查询用户和密码是否匹配？
+        QueryWrapper<ScUsers> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", id);
+        queryWrapper.eq("user_password_hash", PasswordUtil.get_jmPasswd(userPasswd, PasswordUtil.SaltValue.getBytes()));
+        ScUsers scUsers = scUsersMapper.selectOne(queryWrapper);
+        if (scUsers == null) {
+            result.setSuccess(false);
+            result.setMessage("用户名或密码错误");
+            return result; // 提前返回，避免后续代码执行
+        }
+
+        // 修改用户表中的状态为away
+        scUsers.setUserOnlineStatus("away");
+        String awayEmail = scUsers.getUserEmail() + "_away";
+        scUsers.setUserEmail(awayEmail);
+        int updateResult = scUsersMapper.updateById(scUsers);
+        if (updateResult != 1) {
+            result.setSuccess(false);
+            result.setMessage("用户状态修改异常");
+            return result; // 提前返回，避免后续代码执行
+        }
+
+        result.setSuccess(true);
+        result.setMessage("用户状态修改成功");
+        return result;
+    }
 }

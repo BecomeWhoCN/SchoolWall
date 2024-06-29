@@ -42,7 +42,7 @@ public class ScUsersController {
         return scUsersService.getLonginValue(email, password);
     }
 
-    @PostMapping("/updateUserPassword")
+    @PostMapping("/update_UserPassword")
     public OperationResult<ScUserDTO> updateUserPassword(@RequestParam Integer id, @RequestParam String oldPasswd, @RequestParam String newPasswd) {
         return scUsersService.updateUserPassword(id,oldPasswd,newPasswd);
     }
@@ -50,6 +50,11 @@ public class ScUsersController {
     @PostMapping("/update_lostPasswd")
     public OperationResult<ScUserDTO> updateLostPasswd(@RequestParam String phone, @RequestParam String email, @RequestParam String newPasswd) {
         return scUsersService.updateLostPasswd(phone,email,newPasswd);
+    }
+
+    @PostMapping("/update_userStatus")
+    public OperationResult<ScUserDTO> updateUserStatus(@RequestParam Integer id) {
+        return scUsersService.updateUserStatus(id);
     }
 
 

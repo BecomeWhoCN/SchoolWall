@@ -1,5 +1,6 @@
 package online.xzjob.schoolwall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qiniu.common.QiniuException;
 import online.xzjob.schoolwall.dto.ScUserDTO;
 import online.xzjob.schoolwall.entity.ScUserAvatars;
@@ -42,6 +43,22 @@ public class ScUserAvatarsServiceImpl extends ServiceImpl<ScUserAvatarsMapper, S
             return result;
         }
 
+        // 检查用户是否已经上传头像
+        QueryWrapper<ScUserAvatars> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", id);
+        ScUserAvatars scUserAvatar = scUserAvatarsMapper.selectOne(queryWrapper);
+        if (scUserAvatar != null) {
+            // 如果用户已经上传头像，则删除七牛云中的旧头像
+            try {
+                qiniuUploadService.deleteFile(scUserAvatar.getAvatarUrl());
+            } catch (QiniuException e) {
+                throw new RuntimeException(e);
+            }
+
+            // 删除数据库中的旧头像记录
+            scUserAvatarsMapper.delete(queryWrapper);
+        }
+
         // 检查文件格式
         String fileName = file.getOriginalFilename();
         String fileType = fileName.substring(fileName.lastIndexOf('.'));
@@ -60,22 +77,16 @@ public class ScUserAvatarsServiceImpl extends ServiceImpl<ScUserAvatarsMapper, S
             String fileUrl = qiniuUploadService.uploadFile(compressedBytes, newFileName, "useravatars");
 
             // 更新数据库中的头像地址
-            ScUserAvatars scUserAvatar = new ScUserAvatars();
-            scUserAvatar.setUserId(id);
-            scUserAvatar.setAvatarUrl(fileUrl);
-
-            if (scUserAvatarsMapper.selectById(id) != null) {
-                scUserAvatarsMapper.updateById(scUserAvatar);
-            } else {
-                scUserAvatarsMapper.insert(scUserAvatar);
-            }
+            ScUserAvatars newScUserAvatar = new ScUserAvatars();
+            newScUserAvatar.setUserId(id);
+            newScUserAvatar.setAvatarUrl(fileUrl);
+            scUserAvatarsMapper.insert(newScUserAvatar);
 
             result.setSuccess(true);
             result.setMessage("头像上传成功");
-
         } catch (IOException e) {
             result.setSuccess(false);
-            result.setMessage("压缩图片失败: " + e.getMessage());
+            result.setMessage("上传头像失败: " + e.getMessage());
         }
 
         return result;

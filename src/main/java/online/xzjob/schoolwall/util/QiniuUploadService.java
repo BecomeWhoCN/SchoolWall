@@ -2,11 +2,14 @@ package online.xzjob.schoolwall.util;
 
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
+import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class QiniuUploadService {
@@ -20,43 +23,55 @@ public class QiniuUploadService {
     private static final String BUCKET_NAME = "schoolwall1";
 
     // 空间对应CDN域名
-    private static final String DOMAIN = "sfrsrdckw.hn-bkt.clouddn.com"; // 你的CDN域名，例如：http://cdn.example.com
+    private static final String DOMAIN = "http://sfrsrdckw.hn-bkt.clouddn.com"; // 你的CDN域名
 
     // 创建上传对象
     private final UploadManager uploadManager;
     private final Auth auth;
+    private final BucketManager bucketManager;
 
     public QiniuUploadService() {
-        Configuration cfg = new Configuration(Region.region2()); // 根据你的实际存储区域选择
+        Configuration cfg = new Configuration(Region.region2()); // 使用正确的区域配置
         this.uploadManager = new UploadManager(cfg);
         this.auth = Auth.create(ACCESS_KEY, SECRET_KEY);
+        this.bucketManager = new BucketManager(auth, cfg);
     }
 
     // 上传文件
-    public String QnUpdataFile(String localFilePath, String fileName, String storagePath) throws QiniuException {
-        String fullPath = storagePath.endsWith("/") ? storagePath + fileName : storagePath + "/" + fileName;
+    public String uploadFile(byte[] fileBytes, String fileName, String directory) throws QiniuException {
         String upToken = auth.uploadToken(BUCKET_NAME);
-        Response response = uploadManager.put(localFilePath, fullPath, upToken);
+        String fullPath = directory + "/" + fileName;
+        Response response = uploadManager.put(fileBytes, fullPath, upToken);
 
         // 解析上传成功的结果
         if (response.isOK()) {
-            return "http://" + DOMAIN + "/" + fullPath;
+            // 为了避免缓存问题，添加一个随机的查询参数
+            String uniqueParam = UUID.randomUUID().toString();
+            return DOMAIN + "/" + fullPath + "?v=" + uniqueParam;
         } else {
             throw new QiniuException(response);
         }
     }
 
-    // 上传字节数组文件
-    public String uploadFile(byte[] fileBytes, String fileName, String storagePath) throws QiniuException {
-        String fullPath = storagePath.endsWith("/") ? storagePath + fileName : storagePath + "/" + fileName;
-        String upToken = auth.uploadToken(BUCKET_NAME);
-        Response response = uploadManager.put(fileBytes, fullPath, upToken);
+    // 删除文件
+    public void deleteFile(String avatarUrl) throws QiniuException {
+        // 提取文件名
+        String fileName = avatarUrl.substring(avatarUrl.lastIndexOf('/') + 1);
+        // 提取路径
+        String filePath = avatarUrl.substring(avatarUrl.indexOf("useravatars"));
 
-        // 解析上传成功的结果
-        if (response.isOK()) {
-            return "http://" + DOMAIN + "/" + fullPath;
-        } else {
-            throw new QiniuException(response);
+        try {
+            Response response = bucketManager.delete(BUCKET_NAME, filePath);
+            if (response.isOK()) {
+                System.out.println("删除成功: " + filePath);
+            } else {
+                throw new QiniuException(response);
+            }
+        } catch (QiniuException ex) {
+            // 如果遇到异常，说明删除失败
+            System.err.println(ex.code());
+            System.err.println(ex.response.toString());
+            throw ex;
         }
     }
 }
