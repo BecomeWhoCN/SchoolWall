@@ -57,5 +57,10 @@ public class ScUsersController {
         return scUsersService.updateUserStatus(id);
     }
 
+    @PostMapping("/update_UserInfo")
+    public OperationResult<ScUserDTO> updateUserInfo(@RequestBody ScUsers scUsers) {
+        return scUsersService.updateUserInfo(scUsers);
+    }
+
 
 }

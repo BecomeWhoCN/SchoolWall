@@ -1,7 +1,6 @@
 package online.xzjob.schoolwall.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.qiniu.common.QiniuException;
 import online.xzjob.schoolwall.dto.ScUserDTO;
 import online.xzjob.schoolwall.entity.ScUserAvatars;
 import online.xzjob.schoolwall.entity.ScUsers;
@@ -9,17 +8,11 @@ import online.xzjob.schoolwall.mapper.ScUserAvatarsMapper;
 import online.xzjob.schoolwall.mapper.ScUsersMapper;
 import online.xzjob.schoolwall.service.IScUsersService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import online.xzjob.schoolwall.util.ImageCompressor;
 import online.xzjob.schoolwall.util.OperationResult;
 import online.xzjob.schoolwall.util.PasswordUtil;
-import online.xzjob.schoolwall.util.QiniuUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -288,6 +281,11 @@ public class ScUsersServiceImpl extends ServiceImpl<ScUsersMapper, ScUsers> impl
         return result;
     }
 
+    @Override
+    public OperationResult<ScUserDTO> updateUserStatus(Integer id) {
+        return null;
+    }
+
     // 根据用户id修改用户的账号状态  /api/scUsers/update_userStatus
     @Override
     public OperationResult<ScUserDTO> updateUserStatus(Integer id, String userPasswd) {
@@ -317,6 +315,33 @@ public class ScUsersServiceImpl extends ServiceImpl<ScUsersMapper, ScUsers> impl
 
         result.setSuccess(true);
         result.setMessage("用户状态修改成功");
+        return result;
+    }
+
+    // 根据对象更改用户信息
+    @Override
+    public OperationResult<ScUserDTO> updateUserInfo(ScUsers scUsers) {
+        OperationResult<ScUserDTO> result = new OperationResult<>();
+
+        // 判断用户是否存在
+        QueryWrapper<ScUsers> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", scUsers.getUserId());
+        queryWrapper.ne("user_online_status", "away");
+        if (scUsersMapper.selectCount(queryWrapper) == 0) {
+            result.setSuccess(false);
+            result.setMessage("用户不存在或者状态出错 不能修改");
+        }
+
+        // 更新数据
+        int updateResult = scUsersMapper.updateById(scUsers);
+        if (updateResult != 1) {
+            result.setSuccess(false);
+            result.setMessage("用户信息更新失败");
+        }
+
+        result.setSuccess(true);
+        result.setMessage("用户信息更新成功");
+
         return result;
     }
 }

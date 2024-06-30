@@ -9,6 +9,8 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Service
@@ -40,14 +42,20 @@ public class QiniuUploadService {
     // 上传文件
     public String uploadFile(byte[] fileBytes, String fileName, String directory) throws QiniuException {
         String upToken = auth.uploadToken(BUCKET_NAME);
-        String fullPath = directory + "/" + fileName;
+
+        // 创建时间戳对抗CDN
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+        String formattedTime = now.format(formatter);
+
+        // 生成唯一的文件名
+        String fullPath = directory + "/" + formattedTime + fileName;
         Response response = uploadManager.put(fileBytes, fullPath, upToken);
 
         // 解析上传成功的结果
+
         if (response.isOK()) {
-            // 为了避免缓存问题，添加一个随机的查询参数
-            String uniqueParam = UUID.randomUUID().toString();
-            return DOMAIN + "/" + fullPath + "?v=" + uniqueParam;
+            return DOMAIN + "/" + fullPath;
         } else {
             throw new QiniuException(response);
         }

@@ -37,4 +37,8 @@ public interface IScUsersService extends IService<ScUsers> {
     // 根据用户id修改用户为away状态，删除用户
     OperationResult<ScUserDTO> updateUserStatus(Integer id);
 
+    // 根据用户id修改用户的账号状态  /api/scUsers/update_userStatus
+    OperationResult<ScUserDTO> updateUserStatus(Integer id, String userPasswd);
+
+    OperationResult<ScUserDTO> updateUserInfo(ScUsers scUsers);
 }
