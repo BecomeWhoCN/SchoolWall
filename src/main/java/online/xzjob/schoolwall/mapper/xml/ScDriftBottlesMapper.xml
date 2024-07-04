@@ -2,4 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="online.xzjob.schoolwall.mapper.ScDriftBottlesMapper">
 
+<!--    <insert id="saveDriftBottles" parameterType="online.xzjob.schoolwall.dto.ScBottleDTO">-->
+<!--        INSERT INTO sc_drift_bottles-->
+<!--        (user_id,user_gender,bottle_title,bottle_content_url,bottle_created_at)-->
+<!--        VALUES-->
+<!--        (#{user_id},#{user_gender},#{bottle_title},#{bottle_content_url},#{bottle_created_at})-->
+<!--    </insert>-->
 </mapper>
