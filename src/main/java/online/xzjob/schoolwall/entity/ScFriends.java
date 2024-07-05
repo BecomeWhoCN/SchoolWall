@@ -31,5 +31,6 @@ public class ScFriends implements Serializable {
 
     private String status;
 
+
     private LocalDateTime createdAt;
 }

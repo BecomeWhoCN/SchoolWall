@@ -1,16 +1,10 @@
 package online.xzjob.schoolwall.service;
 
-import online.xzjob.schoolwall.entity.ScPrivateMessages;
-import com.baomidou.mybatisplus.extension.service.IService;
+import online.xzjob.schoolwall.dto.ScPrivateMessagesDTO;
 
-/**
- * <p>
- *  服务类
- * </p>
- *
- * @author 熊峥
- * @since 2024-06-26
- */
-public interface IScPrivateMessagesService extends IService<ScPrivateMessages> {
+import java.util.List;
 
+public interface IScPrivateMessagesService {
+    List<ScPrivateMessagesDTO> getPrivateMessages(Integer userId1, Integer userId2);
+    void sendPrivateMessage(ScPrivateMessagesDTO privateMessageDTO);
 }

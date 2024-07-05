@@ -3,7 +3,6 @@ package online.xzjob.schoolwall.util;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import online.xzjob.schoolwall.dto.ScUserDTO;
 
 import java.time.LocalDateTime;
 
@@ -25,9 +24,5 @@ public class OperationResult<T> {
         this.timestamp = LocalDateTime.now();
         this.message = message;
         this.data = data;
-    }
-
-    public void setData(ScUserDTO data) {
-        this.data = (T) data;
     }
 }
