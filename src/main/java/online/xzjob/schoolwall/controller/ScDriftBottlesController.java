@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -25,6 +26,7 @@ import java.util.Date;
 public class ScDriftBottlesController {
     @Autowired
     IScDriftBottlesService bottlesService;
+
     /**
      * 扔漂流瓶
      */
@@ -43,5 +45,16 @@ public class ScDriftBottlesController {
                 .bottle_created_at(bottle_created_at)
                 .build();
         return bottlesService.createDriftBottles(scBottleDTO);
+    }
+
+    /**
+     * 随机获取三个漂流瓶的内容
+     * @return
+     */
+    @GetMapping("/random_articles")
+    public List<ScBottleDTO> getRandomArticles(){
+        System.out.println("test-------------------乱码测试");
+        bottlesService.findRandomDriftBottles().forEach(System.out::println);
+        return bottlesService.findRandomDriftBottles();
     }
 }

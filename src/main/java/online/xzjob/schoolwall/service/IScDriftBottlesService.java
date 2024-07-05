@@ -5,6 +5,8 @@ import online.xzjob.schoolwall.entity.ScDriftBottles;
 import com.baomidou.mybatisplus.extension.service.IService;
 import online.xzjob.schoolwall.util.OperationResult;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -20,4 +22,6 @@ public interface IScDriftBottlesService extends IService<ScDriftBottles> {
      * @return
      */
     OperationResult<ScBottleDTO> createDriftBottles(ScBottleDTO scBottleDTO);
+
+    public List<ScBottleDTO> findRandomDriftBottles();
 }
