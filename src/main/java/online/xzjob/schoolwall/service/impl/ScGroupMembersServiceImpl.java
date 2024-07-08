@@ -4,7 +4,10 @@ import online.xzjob.schoolwall.entity.ScGroupMembers;
 import online.xzjob.schoolwall.mapper.ScGroupMembersMapper;
 import online.xzjob.schoolwall.service.IScGroupMembersService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -16,5 +19,20 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ScGroupMembersServiceImpl extends ServiceImpl<ScGroupMembersMapper, ScGroupMembers> implements IScGroupMembersService {
+    private final ScGroupMembersMapper scGroupMembersMapper;
 
+    @Autowired
+    public ScGroupMembersServiceImpl(ScGroupMembersMapper scGroupMemberMapper) {
+        this.scGroupMembersMapper = scGroupMemberMapper;
+    }
+
+    @Override
+    public List<ScGroupMembers> getGroupMembers(Integer groupId) {
+        return scGroupMembersMapper.getGroupMembers(groupId);
+    }
+
+    @Override
+    public void removeMember(Integer groupId, Integer userId) {
+        scGroupMembersMapper.removeMember(groupId, userId);
+    }
 }

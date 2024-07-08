@@ -1,7 +1,12 @@
 package online.xzjob.schoolwall.service;
 
+import online.xzjob.schoolwall.dto.GroupSearchResult;
 import online.xzjob.schoolwall.entity.ScGroups;
 import com.baomidou.mybatisplus.extension.service.IService;
+import online.xzjob.schoolwall.entity.ScGroups;
+import online.xzjob.schoolwall.util.OperationResult;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +17,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2024-06-26
  */
 public interface IScGroupsService extends IService<ScGroups> {
+    void createGroup(ScGroups group);
+    List<ScGroups> getUserGroups(Integer userId);
+    void updateGroupInfo(ScGroups group);
+    void deleteGroup(Integer groupId);
 
+    OperationResult<List<GroupSearchResult>> searchGroups(String query);
 }

@@ -2,6 +2,7 @@ package online.xzjob.schoolwall.controller;
 
 import online.xzjob.schoolwall.dto.PendingFriendRequestDTO;
 import online.xzjob.schoolwall.dto.ScFriendsDTO;
+import online.xzjob.schoolwall.entity.ScFriends;
 import online.xzjob.schoolwall.service.IScFriendsService;
 import online.xzjob.schoolwall.util.OperationResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,11 @@ public class ScFriendsController {
     public OperationResult<Void> deleteFriend(@RequestParam Integer userId, @RequestParam Integer friendId) {
         scFriendsService.deleteFriend(userId, friendId);
         return new OperationResult<>(true, "好友删除成功", null);
+    }
+
+    @PostMapping("/add")
+    public OperationResult<ScFriends> addFriend(@RequestBody ScFriends friend) {
+        return scFriendsService.createFriendRequest(friend);
     }
 
 }

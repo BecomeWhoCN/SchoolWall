@@ -1,11 +1,14 @@
 package online.xzjob.schoolwall.controller;
 
 import online.xzjob.schoolwall.dto.ScUserDTO;
+import online.xzjob.schoolwall.dto.UserSearchResult;
 import online.xzjob.schoolwall.entity.ScUsers;
 import online.xzjob.schoolwall.service.IScUsersService;
 import online.xzjob.schoolwall.util.OperationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -62,5 +65,9 @@ public class ScUsersController {
         return scUsersService.updateUserInfo(scUsers);
     }
 
+    @GetMapping("/searchUsers")
+    public OperationResult<List<UserSearchResult>> searchUsers(@RequestParam String query) {
+        return scUsersService.searchUsers(query);
+    }
 
 }

@@ -2,6 +2,7 @@ package online.xzjob.schoolwall.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import online.xzjob.schoolwall.dto.ScUserDTO;
+import online.xzjob.schoolwall.dto.UserSearchResult;
 import online.xzjob.schoolwall.entity.ScUserAvatars;
 import online.xzjob.schoolwall.entity.ScUsers;
 import online.xzjob.schoolwall.mapper.ScUserAvatarsMapper;
@@ -13,6 +14,7 @@ import online.xzjob.schoolwall.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -343,5 +345,11 @@ public class ScUsersServiceImpl extends ServiceImpl<ScUsersMapper, ScUsers> impl
         result.setMessage("用户信息更新成功");
 
         return result;
+    }
+
+    @Override
+    public OperationResult<List<UserSearchResult>> searchUsers(String query) {
+        List<UserSearchResult> results = scUsersMapper.selectUserSearchResults(query);
+        return new OperationResult<>(true, "搜索成功", results);
     }
 }

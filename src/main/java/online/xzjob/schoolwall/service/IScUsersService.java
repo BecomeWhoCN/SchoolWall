@@ -1,10 +1,13 @@
 package online.xzjob.schoolwall.service;
 
 import online.xzjob.schoolwall.dto.ScUserDTO;
+import online.xzjob.schoolwall.dto.UserSearchResult;
 import online.xzjob.schoolwall.entity.ScUsers;
 import com.baomidou.mybatisplus.extension.service.IService;
 import online.xzjob.schoolwall.util.OperationResult;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * <p>
@@ -41,4 +44,6 @@ public interface IScUsersService extends IService<ScUsers> {
     OperationResult<ScUserDTO> updateUserStatus(Integer id, String userPasswd);
 
     OperationResult<ScUserDTO> updateUserInfo(ScUsers scUsers);
+
+    OperationResult<List<UserSearchResult>> searchUsers(String query);
 }

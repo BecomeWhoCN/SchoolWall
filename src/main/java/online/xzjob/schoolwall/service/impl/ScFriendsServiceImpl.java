@@ -6,6 +6,7 @@ import online.xzjob.schoolwall.entity.ScFriends;
 import online.xzjob.schoolwall.mapper.ScFriendsMapper;
 import online.xzjob.schoolwall.service.IScFriendsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import online.xzjob.schoolwall.util.OperationResult;
 import org.apache.logging.log4j.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,4 +49,9 @@ public class ScFriendsServiceImpl extends ServiceImpl<ScFriendsMapper, ScFriends
         scFriendsMapper.deleteFriend(userId, friendId);
     }
 
+    @Override
+    public OperationResult<ScFriends> createFriendRequest(ScFriends friend) {
+        save(friend);
+        return new OperationResult<>(true, "好友请求已发送", friend);
+    }
 }
