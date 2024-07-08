@@ -22,5 +22,6 @@ public interface IScGroupsService extends IService<ScGroups> {
     void updateGroupInfo(ScGroups group);
     void deleteGroup(Integer groupId);
 
+    // 模糊搜索群组
     OperationResult<List<GroupSearchResult>> searchGroups(String query);
 }

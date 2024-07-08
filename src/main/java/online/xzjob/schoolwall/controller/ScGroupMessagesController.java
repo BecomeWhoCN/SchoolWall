@@ -26,12 +26,14 @@ public class ScGroupMessagesController {
         this.scGroupMessageService = scGroupMessageService;
     }
 
+    // 发送群组消息
     @PostMapping("/send")
     public OperationResult<Void> sendMessage(@RequestBody ScGroupMessages message) {
         scGroupMessageService.sendMessage(message);
         return new OperationResult<>(true, "消息发送成功", null);
     }
 
+    // 获取群组消息
     @GetMapping("/getMessages")
     public OperationResult<List<ScGroupMessages>> getGroupMessages(@RequestParam Integer groupId) {
         List<ScGroupMessages> messages = scGroupMessageService.getGroupMessages(groupId);

@@ -1,10 +1,10 @@
 package online.xzjob.schoolwall.service;
 
+import online.xzjob.schoolwall.dto.FriendSearchResult;
 import online.xzjob.schoolwall.dto.ScFriendsDTO;
 import com.baomidou.mybatisplus.extension.service.IService;
 import online.xzjob.schoolwall.entity.ScFriends;
 import online.xzjob.schoolwall.util.OperationResult;
-import org.apache.logging.log4j.message.Message;
 import online.xzjob.schoolwall.dto.PendingFriendRequestDTO;
 
 import java.util.List;
@@ -16,5 +16,8 @@ public interface IScFriendsService extends IService<ScFriends> {
     void updateFriendNickname(Integer userId, Integer friendId, String nickname);
     void deleteFriend(Integer userId, Integer friendId);
 
-    OperationResult<ScFriends> createFriendRequest(ScFriends friend);
+    OperationResult<ScFriends> createFriendRequest(String friendId, String userId);
+
+    // 模糊搜索好友
+    OperationResult<List<FriendSearchResult>> searchFriends(String query, int userId);
 }

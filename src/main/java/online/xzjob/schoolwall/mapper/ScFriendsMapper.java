@@ -1,5 +1,6 @@
 package online.xzjob.schoolwall.mapper;
 
+import online.xzjob.schoolwall.dto.FriendSearchResult;
 import online.xzjob.schoolwall.dto.ScFriendsDTO;
 import online.xzjob.schoolwall.entity.ScFriends;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -42,5 +43,11 @@ public interface ScFriendsMapper extends BaseMapper<ScFriends> {
 
     @Delete("DELETE FROM sc_friends WHERE user_id = #{userId} AND friend_id = #{friendId}")
     void deleteFriend(@Param("userId") Integer userId, @Param("friendId") Integer friendId);
+
+    @Select("SELECT f.friend_id, u.user_name AS friend_name, a.avatar_url FROM sc_friends f " +
+            "JOIN sc_users u ON f.friend_id = u.user_id " +
+            "LEFT JOIN sc_user_avatars a ON f.friend_id = a.user_id " +
+            "WHERE f.user_id = #{userId} AND u.user_name LIKE CONCAT('%', #{query}, '%')")
+    List<FriendSearchResult> searchFriends(@Param("query") String query, @Param("userId") int userId);
 
 }

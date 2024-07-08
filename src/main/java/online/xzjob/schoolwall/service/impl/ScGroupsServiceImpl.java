@@ -52,7 +52,7 @@ public class ScGroupsServiceImpl extends ServiceImpl<ScGroupsMapper, ScGroups> i
 
     @Override
     public OperationResult<List<GroupSearchResult>> searchGroups(String query) {
-        List<GroupSearchResult> results = scGroupsMapper.selectGroupSearchResults(query);
-        return new OperationResult<>(true, "搜索成功", results);
+        List<GroupSearchResult> groups = baseMapper.searchGroups(query);
+        return new OperationResult<>(true, "查询成功", groups);
     }
 }

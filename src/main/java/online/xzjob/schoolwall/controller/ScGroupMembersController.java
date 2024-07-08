@@ -26,12 +26,14 @@ public class ScGroupMembersController {
         this.scGroupMembersService = scGroupMembersService;
     }
 
+    // 获取群组成员列表
     @GetMapping("/members")
     public OperationResult<List<ScGroupMembers>> getGroupMembers(@RequestParam Integer groupId) {
         List<ScGroupMembers> members = scGroupMembersService.getGroupMembers(groupId);
         return new OperationResult<>(true, "查询成功", members);
     }
 
+    // 移除群组成员
     @PostMapping("/removeMember")
     public OperationResult<Void> removeMember(@RequestParam Integer groupId, @RequestParam Integer userId) {
         scGroupMembersService.removeMember(groupId, userId);

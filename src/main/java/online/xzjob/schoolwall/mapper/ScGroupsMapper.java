@@ -22,7 +22,6 @@ public interface ScGroupsMapper extends BaseMapper<ScGroups> {
     @Select("SELECT * FROM sc_groups WHERE group_id IN (SELECT group_id FROM sc_group_members WHERE user_id = #{userId})")
     List<ScGroups> getUserGroups(@Param("userId") Integer userId);
 
-    @Select("SELECT group_id, group_name, group_created_at FROM sc_groups " +
-            "WHERE group_name LIKE CONCAT('%', #{query}, '%')")
-    List<GroupSearchResult> selectGroupSearchResults(@Param("query") String query);
+    @Select("SELECT group_id, group_name, group_description FROM sc_groups WHERE group_name LIKE CONCAT('%', #{query}, '%')")
+    List<GroupSearchResult> searchGroups(@Param("query") String query);
 }

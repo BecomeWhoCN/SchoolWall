@@ -26,18 +26,21 @@ public class ScGroupInvitationsController {
         this.scGroupInvitationsService = scGroupInvitationService;
     }
 
+    // 发送群组邀请
     @PostMapping("/invite")
     public OperationResult<Void> inviteUser(@RequestBody ScGroupInvitations invitation) {
         scGroupInvitationsService.inviteUser(invitation);
         return new OperationResult<>(true, "邀请已发送", null);
     }
 
+    // 响应群组邀请
     @PostMapping("/respond")
     public OperationResult<Void> respondToInvitation(@RequestParam Integer invitationId, @RequestParam String status) {
         scGroupInvitationsService.respondToInvitation(invitationId, status);
         return new OperationResult<>(true, "操作成功", null);
     }
 
+    // 邀请用户加入群组
     @PostMapping("/inviteToGroup")
     public OperationResult<ScGroupInvitations> inviteToGroup(@RequestBody ScGroupInvitations invitation) {
         return scGroupInvitationsService.createInvitation(invitation);
