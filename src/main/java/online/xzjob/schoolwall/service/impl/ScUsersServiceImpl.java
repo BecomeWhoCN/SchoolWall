@@ -1,22 +1,24 @@
 package online.xzjob.schoolwall.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import online.xzjob.schoolwall.dto.ScUserDTO;
+import online.xzjob.schoolwall.dto.ScUserSetting;
 import online.xzjob.schoolwall.entity.ScUserAvatars;
 import online.xzjob.schoolwall.entity.ScUsers;
 import online.xzjob.schoolwall.mapper.ScUserAvatarsMapper;
 import online.xzjob.schoolwall.mapper.ScUsersMapper;
 import online.xzjob.schoolwall.service.IScUsersService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import online.xzjob.schoolwall.util.OperationResult;
 import online.xzjob.schoolwall.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- *  服务实现类
+ * 服务实现类
  *
  * @author 熊峥
  * @since 2024-06-26
@@ -56,7 +58,7 @@ public class ScUsersServiceImpl extends ServiceImpl<ScUsersMapper, ScUsers> impl
         }
 
         // 加密密码
-        String hashedPassword = PasswordUtil.get_jmPasswd(user.getUserPasswordHash(),PasswordUtil.SaltValue.getBytes());
+        String hashedPassword = PasswordUtil.get_jmPasswd(user.getUserPasswordHash(), PasswordUtil.SaltValue.getBytes());
         user.setUserPasswordHash(hashedPassword);
 
         // 如果不存在，创建新用户
@@ -343,5 +345,31 @@ public class ScUsersServiceImpl extends ServiceImpl<ScUsersMapper, ScUsers> impl
         result.setMessage("用户信息更新成功");
 
         return result;
+    }
+
+    public List<ScUserSetting> findAllUsers(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return scUsersMapper.findAllUsers(offset, pageSize);
+    }
+
+    public int countTotalUsers() {
+        return scUsersMapper.countTotalUsers();
+
+
+    }
+
+    public Boolean increasePermission(Integer id) {
+        if (scUsersMapper.increasePermission(id)==1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public Boolean decreasePermission(Integer id) {
+        if (scUsersMapper.decreasePermission(id)==1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import online.xzjob.schoolwall.dto.ScUserDTO;
+import online.xzjob.schoolwall.dto.ScUserSetting;
 
 import java.time.LocalDateTime;
 
@@ -27,7 +28,11 @@ public class OperationResult<T> {
         this.data = data;
     }
 
-    public void setData(ScUserDTO data) {
-        this.data = (T) data;
-    }
+//    public void setData(ScUserDTO data) {
+//        this.data = (T) data;
+//    }
+//
+//    public void setData(ScUserSetting data) {
+//        this.data = (T) data;
+//    }
 }

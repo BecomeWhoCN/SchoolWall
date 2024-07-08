@@ -1,7 +1,10 @@
 package online.xzjob.schoolwall.service;
 
+import online.xzjob.schoolwall.dto.ScReportedDriftBottlesDTO;
 import online.xzjob.schoolwall.entity.ScDriftBottles;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IScDriftBottlesService extends IService<ScDriftBottles> {
 
+    List<ScReportedDriftBottlesDTO> findAllReportedDriftBottles(int page, int pageSize);
+
+    int countTotalReportedDriftBottles();
+
+    boolean republish(Integer postId);
+
+    boolean delete(Integer bottleId);
 }

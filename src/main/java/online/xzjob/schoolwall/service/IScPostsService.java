@@ -1,7 +1,12 @@
 package online.xzjob.schoolwall.service;
 
+import online.xzjob.schoolwall.dto.ScReportedPostDTO;
+import online.xzjob.schoolwall.dto.ScUserDTO;
+import online.xzjob.schoolwall.dto.ScUserSetting;
 import online.xzjob.schoolwall.entity.ScPosts;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +18,15 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IScPostsService extends IService<ScPosts> {
 
+    List<ScReportedPostDTO> findAllReportedPosts(int page, int pageSize);
+
+    int countTotalReportedPosts();
+
+
+
+    boolean sendToDraft(Integer postId);
+
+    boolean republish(Integer postId);
+
+    boolean delete(Integer postId);
 }
