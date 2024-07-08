@@ -2,6 +2,8 @@ package online.xzjob.schoolwall.service.impl;
 
 import jakarta.annotation.Resource;
 import online.xzjob.schoolwall.dto.ScBottleDTO;
+import online.xzjob.schoolwall.dto.ScBottleReplyDTO;
+import online.xzjob.schoolwall.entity.ScDriftBottleReply;
 import online.xzjob.schoolwall.entity.ScDriftBottles;
 import online.xzjob.schoolwall.mapper.ScDriftBottlesMapper;
 import online.xzjob.schoolwall.service.IScDriftBottlesService;
@@ -21,7 +23,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +44,9 @@ public class ScDriftBottlesServiceImpl extends ServiceImpl<ScDriftBottlesMapper,
 
     @Autowired
     private ScDriftBottlesMapper scDriftBottlesMapper;
+
+    @Autowired
+    private ScUsersServiceImpl usersService = null;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -104,10 +111,78 @@ public class ScDriftBottlesServiceImpl extends ServiceImpl<ScDriftBottlesMapper,
             dto.setBottle_content_url(bottle.getBottleContentUrl());
             dto.setBottle_created_at(Date.from(bottle.getBottleCreatedAt().atZone(ZoneId.systemDefault()).toInstant()));
             dto.setBottle_content(fetchContent(bottle.getBottleContentUrl()));
-            System.out.println("fetchContent测试--------------------------------------------------->");
+//            System.out.println("fetchContent测试--------------------------------------------------->");
             System.out.println(fetchContent(bottle.getBottleContentUrl()));
             return dto;
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * 获取已发布的漂流瓶
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public Map<String, Object> getPublishedBottles(int userId, int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        List<ScDriftBottles> bottles = scDriftBottlesMapper.findPublishedBottles(userId, offset, pageSize);
+        int total = scDriftBottlesMapper.countPublishedBottles(userId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("bottles", bottles);
+        response.put("total", total);
+        return response;
+    }
+
+    /**
+     * 根据瓶子id删除漂流瓶
+     * @param bottleId
+     * @return
+     */
+    @Override
+    public boolean deleteBottleById(int bottleId) {
+        return scDriftBottlesMapper.deleteBottleById(bottleId) > 0;
+    }
+
+    @Override
+    public boolean saveReply(ScDriftBottleReply reply) {
+        return scDriftBottlesMapper.insert(reply) > 0;
+    }
+
+
+    @Override
+    public ScBottleDTO getBottleDetails(int bottleId) {
+        ScDriftBottles bottle = scDriftBottlesMapper.selectById(bottleId);
+        if (bottle != null) {
+            ScBottleDTO bottleDTO = new ScBottleDTO();
+            bottleDTO.setBottle_title(bottle.getBottleTitle());
+            bottleDTO.setBottle_content_url(bottle.getBottleContentUrl());
+            bottleDTO.setUser_name(usersService.getUserById(bottle.getUserId()).getData().getUserName());
+            return bottleDTO;
+        }
+        return null;
+    }
+
+    @Override
+    public List<ScBottleReplyDTO> getBottleReplies(int bottleId) {
+
+        List<ScDriftBottleReply> replies = scDriftBottlesMapper.selectByBottleId(bottleId);
+
+        System.out.println("----------------replies---------------");
+        System.out.println(bottleId);
+
+        replies.forEach(System.out::println);
+        if (replies != null) {
+            return replies.stream().map(reply -> {
+                ScBottleReplyDTO replyDTO = new ScBottleReplyDTO();
+                replyDTO.setReply_content(reply.getReply_content());
+                replyDTO.setUser_name(usersService.getUserById(reply.getUser_id()).getData().getUserName());
+                replyDTO.setUser_id(usersService.getUserById(reply.getUser_id()).getData().getUserId());
+                replyDTO.setReply_created_at(reply.getReply_created_at());
+                return replyDTO;
+            }).collect(Collectors.toList());
+        }
+        return null;
     }
 
     private String fetchContent(String fileUrl) {
@@ -130,11 +205,11 @@ public class ScDriftBottlesServiceImpl extends ServiceImpl<ScDriftBottlesMapper,
                     content.append(line);
                 }
 
-                // 移除 HTML 标签
-                String rawContent = content.toString();
-                String cleanedContent = removeHtmlTags(rawContent);
+//                // 移除 HTML 标签
+//                String rawContent = content.toString();
+//                String cleanedContent = removeHtmlTags(rawContent);
 
-                return cleanedContent;
+                return content.toString();
             }
         } catch (Exception e) {
             System.err.println("获取文件内容失败: " + e.getMessage());

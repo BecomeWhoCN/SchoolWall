@@ -1,14 +1,11 @@
 package online.xzjob.schoolwall.mapper;
 
 import online.xzjob.schoolwall.dto.ScBottleDTO;
+import online.xzjob.schoolwall.dto.ScBottleReplyDTO;
+import online.xzjob.schoolwall.entity.ScDriftBottleReply;
 import online.xzjob.schoolwall.entity.ScDriftBottles;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import online.xzjob.schoolwall.util.QiniuUploadService;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -40,4 +37,31 @@ public interface ScDriftBottlesMapper extends BaseMapper<ScDriftBottles> {
             @Result(column = "bottle_created_at", property = "bottleCreatedAt")
     })
     List<ScDriftBottles> findRandomDriftBottles();
+
+    @Select("SELECT bottle_id, user_id, user_gender, bottle_title, bottle_content_url, bottle_created_at, bottle_attachment_url " +
+            "FROM sc_drift_bottles "  +
+            "WHERE user_id = #{userId} OR bottle_id IN (SELECT bottle_id FROM sc_drift_bottle_taken WHERE user_id = #{userId}) "+
+            "LIMIT #{offset}, #{pageSize}")
+    List<ScDriftBottles> findPublishedBottles(@Param("userId") int userId, @Param("offset") int offset, @Param("pageSize") int pageSize);
+
+    @Select("SELECT COUNT(*) " +
+            "FROM sc_drift_bottles " +
+            "WHERE user_id = #{userId} OR bottle_id IN (SELECT bottle_id FROM sc_drift_bottle_taken WHERE user_id = #{userId})")
+    int countPublishedBottles(@Param("userId") int userId);
+
+    @Delete("DELETE FROM sc_drift_bottles WHERE bottle_id = #{bottleId}")
+    int deleteBottleById(@Param("bottleId") int bottleId);
+
+    @Insert("INSERT INTO sc_drift_bottle_replies (bottle_id, user_id, reply_content, reply_created_at) VALUES (#{bottle_id}, #{user_id}, #{reply_content}, #{reply_created_at})")
+    int insert(ScDriftBottleReply reply);
+
+    @Select("SELECT * FROM sc_drift_bottle_replies WHERE bottle_id = #{bottleId}")
+    @Results({
+            @Result(property = "reply_id", column = "reply_id"),
+            @Result(property = "bottle_id", column = "bottle_id"),
+            @Result(property = "user_id", column = "user_id"),
+            @Result(property = "reply_content", column = "reply_content"),
+            @Result(property = "reply_created_at", column = "reply_created_at")
+    })
+    List<ScDriftBottleReply> selectByBottleId(@Param("bottleId") int bottleId);
 }
