@@ -1,5 +1,7 @@
 package online.xzjob.schoolwall.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import online.xzjob.schoolwall.dto.ScReportedDriftBottlesDTO;
 import jakarta.annotation.Resource;
 import online.xzjob.schoolwall.dto.ScBottleDTO;
 import online.xzjob.schoolwall.dto.ScBottleReplyDTO;
@@ -10,6 +12,7 @@ import online.xzjob.schoolwall.service.IScDriftBottlesService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import online.xzjob.schoolwall.util.OperationResult;
 import online.xzjob.schoolwall.util.QiniuUploadService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import java.util.List;
+
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author lpl
@@ -38,6 +43,38 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ScDriftBottlesServiceImpl extends ServiceImpl<ScDriftBottlesMapper, ScDriftBottles> implements IScDriftBottlesService {
+    @Autowired
+    private ScDriftBottlesMapper scDriftBottlesMapper;
+
+    @Override
+    public List<ScReportedDriftBottlesDTO> findAllReportedDriftBottles(int page, int pageSize) {
+
+        int offset = (page - 1) * pageSize;
+        return scDriftBottlesMapper.findAllReportedPosts(offset, pageSize);
+    }
+
+    @Override
+    public int countTotalReportedDriftBottles() {
+        return scDriftBottlesMapper.countTotalReportedPosts();
+    }
+
+    @Override
+    public boolean republish(Integer bottleId) {
+        if (scDriftBottlesMapper.republish(bottleId) == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean delete(Integer bottleId) {
+        if (scDriftBottlesMapper.delete(bottleId) == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     @Autowired
     private QiniuUploadService qiniuUploadService = null;

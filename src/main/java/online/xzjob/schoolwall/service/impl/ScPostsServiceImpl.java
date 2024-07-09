@@ -1,5 +1,8 @@
 package online.xzjob.schoolwall.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import online.xzjob.schoolwall.dto.ScNewsDataDTO;
+import online.xzjob.schoolwall.dto.ScReportedPostDTO;
 import com.qiniu.common.QiniuException;
 import freemarker.core.NonStringOrTemplateOutputException;
 import online.xzjob.schoolwall.dto.ScPostsDTO;
@@ -10,7 +13,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import online.xzjob.schoolwall.util.OperationResult;
 import online.xzjob.schoolwall.util.QiniuUploadService00;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -18,7 +24,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author 熊峥
@@ -206,4 +212,78 @@ public class ScPostsServiceImpl extends ServiceImpl<ScPostsMapper, ScPosts> impl
              return rf;
          }
     }
+    @Autowired
+    private ScPostsMapper scPostsMapper;
+
+    @Override
+    public List<ScReportedPostDTO> findAllReportedPosts(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return scPostsMapper.findAllReportedPosts(offset, pageSize);
+    }
+
+    @Override
+    public int countTotalReportedPosts() {
+        return scPostsMapper.countTotalReportedPosts();
+    }
+
+    @Override
+    public boolean sendToDraft(Integer postId) {
+        if (scPostsMapper.sendToDraft(postId) == 1) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    @Override
+    public boolean republish(Integer postId) {
+        if (scPostsMapper.republish(postId) == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean delete(Integer postId) {
+        if (scPostsMapper.delete(postId) == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public List<ScNewsDataDTO> findNewsData() {
+        return scPostsMapper.findNewsData();
+    }
+
+    @Override
+    public List<ScNewsDataDTO> findArticlesData() {
+        return scPostsMapper.findArticlesData();
+    }
+
+    @Override
+    public List<ScNewsDataDTO> findAllArticlesData(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return scPostsMapper.findAllArticlesData(offset, pageSize);
+    }
+
+    @Override
+    public int countTotalAllArticlesData() {
+        return scPostsMapper.countTotalAllArticlesData();
+    }
+
+    @Override
+    public List<ScNewsDataDTO> findAllNewsData(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return scPostsMapper.findAllNewsData(offset, pageSize);
+    }
+
+    @Override
+    public int countTotalAllNewsData() {
+        return scPostsMapper.countTotalAllNewsData();    }
+
+
 }

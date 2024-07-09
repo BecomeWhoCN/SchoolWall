@@ -1,6 +1,10 @@
 package online.xzjob.schoolwall.service;
 
 import online.xzjob.schoolwall.dto.ScPostsDTO;
+import online.xzjob.schoolwall.dto.ScNewsDataDTO;
+import online.xzjob.schoolwall.dto.ScReportedPostDTO;
+import online.xzjob.schoolwall.dto.ScUserDTO;
+import online.xzjob.schoolwall.dto.ScUserSetting;
 import online.xzjob.schoolwall.entity.ScPosts;
 import com.baomidou.mybatisplus.extension.service.IService;
 import online.xzjob.schoolwall.util.OperationResult;
@@ -34,4 +38,27 @@ public interface IScPostsService extends IService<ScPosts> {
     OperationResult<Integer> updatearticle(ScPosts scPosts, ScPostsDTO scPostsDTO);
 
     OperationResult<ScPostsDTO> selectOne(Integer postId);
+    List<ScReportedPostDTO> findAllReportedPosts(int page, int pageSize);
+
+    int countTotalReportedPosts();
+
+
+
+    boolean sendToDraft(Integer postId);
+
+    boolean republish(Integer postId);
+
+    boolean delete(Integer postId);
+
+    List<ScNewsDataDTO> findNewsData();
+
+    List<ScNewsDataDTO> findArticlesData();
+
+    List<ScNewsDataDTO> findAllArticlesData(int page, int pageSize);
+
+    int countTotalAllArticlesData();
+
+    List<ScNewsDataDTO> findAllNewsData(int page, int pageSize);
+
+    int countTotalAllNewsData();
 }

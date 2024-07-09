@@ -1,10 +1,12 @@
 package online.xzjob.schoolwall.service;
 
 import online.xzjob.schoolwall.dto.ScUserDTO;
+import online.xzjob.schoolwall.dto.ScUserSetting;
 import online.xzjob.schoolwall.entity.ScUsers;
 import com.baomidou.mybatisplus.extension.service.IService;
 import online.xzjob.schoolwall.util.OperationResult;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * <p>
@@ -15,6 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
  * @since 2024-06-26
  */
 public interface IScUsersService extends IService<ScUsers> {
+
+
+
 
     // 注册用户
     OperationResult<ScUserDTO> createUser(ScUsers user);
@@ -41,4 +46,13 @@ public interface IScUsersService extends IService<ScUsers> {
     OperationResult<ScUserDTO> updateUserStatus(Integer id, String userPasswd);
 
     OperationResult<ScUserDTO> updateUserInfo(ScUsers scUsers);
+
+
+    List<ScUserSetting> findAllUsers(int page, int pageSize) ;
+
+     int countTotalUsers() ;
+
+   Boolean increasePermission(Integer id);
+
+    Boolean decreasePermission(Integer id);
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import online.xzjob.schoolwall.dto.ScUserDTO;
+import online.xzjob.schoolwall.dto.ScUserSetting;
 
 import java.time.LocalDateTime;
 
