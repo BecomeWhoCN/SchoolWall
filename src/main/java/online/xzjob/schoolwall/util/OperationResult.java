@@ -27,7 +27,7 @@ public class OperationResult<T> {
         this.data = data;
     }
 
-    public void setData(ScUserDTO data) {
+    public void setData(T data) {
         this.data = (T) data;
     }
 }

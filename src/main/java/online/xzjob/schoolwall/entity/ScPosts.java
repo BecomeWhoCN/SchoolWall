@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * <p>
@@ -16,8 +16,11 @@ import lombok.Setter;
  * @author 熊峥
  * @since 2024-06-26
  */
-@Getter
-@Setter
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("sc_posts")
 public class ScPosts implements Serializable {
 
@@ -29,6 +32,8 @@ public class ScPosts implements Serializable {
     private Integer userId;
 
     private String postTitle;
+
+    private String postSummary;
 
     private String postContentUrl;
 
