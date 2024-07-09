@@ -1,6 +1,7 @@
 package online.xzjob.schoolwall.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import online.xzjob.schoolwall.dto.ScNewsDataDTO;
 import online.xzjob.schoolwall.dto.ScReportedPostDTO;
 import online.xzjob.schoolwall.entity.ScPosts;
 import online.xzjob.schoolwall.mapper.ScPostsMapper;
@@ -61,6 +62,37 @@ public class ScPostsServiceImpl extends ServiceImpl<ScPostsMapper, ScPosts> impl
             return false;
         }
     }
+
+    @Override
+    public List<ScNewsDataDTO> findNewsData() {
+        return scPostsMapper.findNewsData();
+    }
+
+    @Override
+    public List<ScNewsDataDTO> findArticlesData() {
+        return scPostsMapper.findArticlesData();
+    }
+
+    @Override
+    public List<ScNewsDataDTO> findAllArticlesData(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return scPostsMapper.findAllArticlesData(offset, pageSize);
+    }
+
+    @Override
+    public int countTotalAllArticlesData() {
+        return scPostsMapper.countTotalAllArticlesData();
+    }
+
+    @Override
+    public List<ScNewsDataDTO> findAllNewsData(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return scPostsMapper.findAllNewsData(offset, pageSize);
+    }
+
+    @Override
+    public int countTotalAllNewsData() {
+        return scPostsMapper.countTotalAllNewsData();    }
 
 
 }

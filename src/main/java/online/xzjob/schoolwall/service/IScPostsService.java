@@ -1,5 +1,6 @@
 package online.xzjob.schoolwall.service;
 
+import online.xzjob.schoolwall.dto.ScNewsDataDTO;
 import online.xzjob.schoolwall.dto.ScReportedPostDTO;
 import online.xzjob.schoolwall.dto.ScUserDTO;
 import online.xzjob.schoolwall.dto.ScUserSetting;
@@ -29,4 +30,16 @@ public interface IScPostsService extends IService<ScPosts> {
     boolean republish(Integer postId);
 
     boolean delete(Integer postId);
+
+    List<ScNewsDataDTO> findNewsData();
+
+    List<ScNewsDataDTO> findArticlesData();
+
+    List<ScNewsDataDTO> findAllArticlesData(int page, int pageSize);
+
+    int countTotalAllArticlesData();
+
+    List<ScNewsDataDTO> findAllNewsData(int page, int pageSize);
+
+    int countTotalAllNewsData();
 }

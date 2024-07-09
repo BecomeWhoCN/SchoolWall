@@ -1,5 +1,6 @@
 package online.xzjob.schoolwall.service;
 
+import online.xzjob.schoolwall.dto.scReportedData;
 import online.xzjob.schoolwall.entity.ScReports;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IScReportsService extends IService<ScReports> {
 
+    Boolean addReportedData(scReportedData scReportedData);
 }

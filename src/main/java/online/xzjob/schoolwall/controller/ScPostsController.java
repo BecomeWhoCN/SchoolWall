@@ -1,16 +1,14 @@
 package online.xzjob.schoolwall.controller;
 
+import online.xzjob.schoolwall.dto.ScNewsDataDTO;
 import online.xzjob.schoolwall.dto.ScReportedPostDTO;
 
 import online.xzjob.schoolwall.dto.ScUserDTO;
 import online.xzjob.schoolwall.service.IScPostsService;
 import online.xzjob.schoolwall.util.OperationResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +42,6 @@ public class ScPostsController {
         result.setData(response);
         result.setMessage("查询成功");
         result.setSuccess(true);
-        System.out.println("----------------------------------");
         System.out.println(result);
 
         return result;
@@ -84,4 +81,80 @@ public class ScPostsController {
         return result;
     }
 
+    @GetMapping("/queryNewsData")
+    public OperationResult<Map<String, Object>> queryNewsData() {
+        OperationResult<Map<String, Object>> result = new OperationResult<>() {};
+
+        List<ScNewsDataDTO> data = scPostsService.findNewsData();
+
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", data);
+
+        result.setData(response);
+        result.setMessage("查询成功");
+        result.setSuccess(true);
+
+
+        return result;
+
+    }
+
+    @GetMapping("/queryArticlesData")
+    public OperationResult<Map<String, Object>> queryArticlesData() {
+        OperationResult<Map<String, Object>> result = new OperationResult<>() {};
+
+        List<ScNewsDataDTO> data = scPostsService.findArticlesData();
+
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", data);
+
+        result.setData(response);
+        result.setMessage("查询成功");
+        result.setSuccess(true);
+
+
+        return result;
+
+    }
+
+    @GetMapping("/queryAllArticles")
+    public OperationResult<Map<String, Object>> queryAllArticlesData() {
+        OperationResult<Map<String, Object>> result = new OperationResult<>() {};
+        int page = 1;
+        int pageSize = 6;
+
+        List<ScNewsDataDTO> articles = scPostsService.findAllArticlesData(page, pageSize);
+        int total = scPostsService.countTotalAllArticlesData();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("articles", articles);
+        response.put("total", total);
+        result.setData(response);
+        result.setMessage("查询成功");
+        result.setSuccess(true);
+        System.out.println(result);
+        return result;
+    }
+
+
+    @GetMapping("/queryAllNews")
+    public OperationResult<Map<String, Object>> queryAllNewsData() {
+        OperationResult<Map<String, Object>> result = new OperationResult<>() {};
+        int page = 1;
+        int pageSize = 6;
+
+        List<ScNewsDataDTO> news = scPostsService.findAllNewsData(page, pageSize);
+        int total = scPostsService.countTotalAllNewsData();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("news", news);
+        response.put("total", total);
+        result.setData(response);
+        result.setMessage("查询成功");
+        result.setSuccess(true);
+        System.out.println(result);
+        return result;
+    }
 }
