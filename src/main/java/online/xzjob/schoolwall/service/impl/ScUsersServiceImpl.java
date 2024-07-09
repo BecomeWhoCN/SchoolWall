@@ -3,6 +3,7 @@ package online.xzjob.schoolwall.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import online.xzjob.schoolwall.dto.ScUserDTO;
+import online.xzjob.schoolwall.dto.UserSearchResult;
 import online.xzjob.schoolwall.dto.ScUserSetting;
 import online.xzjob.schoolwall.entity.ScUserAvatars;
 import online.xzjob.schoolwall.entity.ScUsers;
@@ -14,6 +15,7 @@ import online.xzjob.schoolwall.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -346,29 +348,9 @@ public class ScUsersServiceImpl extends ServiceImpl<ScUsersMapper, ScUsers> impl
         return result;
     }
 
-    public List<ScUserSetting> findAllUsers(int page, int pageSize) {
-        int offset = (page - 1) * pageSize;
-        return scUsersMapper.findAllUsers(offset, pageSize);
-    }
-
-    public int countTotalUsers() {
-        return scUsersMapper.countTotalUsers();
-
-
-    }
-
-    public Boolean increasePermission(Integer id) {
-        if (scUsersMapper.increasePermission(id)==1) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    public Boolean decreasePermission(Integer id) {
-        if (scUsersMapper.decreasePermission(id)==1) {
-            return true;
-        } else {
-            return false;
-        }
+    @Override
+    public OperationResult<List<UserSearchResult>> searchUsers(String query) {
+        List<UserSearchResult> results = scUsersMapper.selectUserSearchResults(query);
+        return new OperationResult<>(true, "搜索成功", results);
     }
 }

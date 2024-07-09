@@ -2,6 +2,7 @@ package online.xzjob.schoolwall.service;
 
 import online.xzjob.schoolwall.entity.ScGroupInvitations;
 import com.baomidou.mybatisplus.extension.service.IService;
+import online.xzjob.schoolwall.util.OperationResult;
 
 /**
  * <p>
@@ -12,5 +13,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2024-06-26
  */
 public interface IScGroupInvitationsService extends IService<ScGroupInvitations> {
+    void inviteUser(ScGroupInvitations invitation);
+    void respondToInvitation(Integer invitationId, String status);
 
+    OperationResult<ScGroupInvitations> createInvitation(ScGroupInvitations invitation);
 }

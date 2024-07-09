@@ -2,9 +2,13 @@ package online.xzjob.schoolwall.service;
 
 import online.xzjob.schoolwall.dto.ScUserDTO;
 import online.xzjob.schoolwall.dto.ScUserSetting;
+import online.xzjob.schoolwall.dto.UserSearchResult;
 import online.xzjob.schoolwall.entity.ScUsers;
 import com.baomidou.mybatisplus.extension.service.IService;
 import online.xzjob.schoolwall.util.OperationResult;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import java.util.List;
 
@@ -55,4 +59,6 @@ public interface IScUsersService extends IService<ScUsers> {
    Boolean increasePermission(Integer id);
 
     Boolean decreasePermission(Integer id);
+
+    OperationResult<List<UserSearchResult>> searchUsers(String query);
 }

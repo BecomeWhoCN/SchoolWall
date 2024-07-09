@@ -32,6 +32,8 @@ public class ScGroupMessages implements Serializable {
 
     private String messageText;
 
+    private String senderName;
+
     private LocalDateTime messageSentAt;
 
     private String messageStatus;

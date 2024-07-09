@@ -1,12 +1,17 @@
 package online.xzjob.schoolwall.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import online.xzjob.schoolwall.dto.ScUserDTO;
+import online.xzjob.schoolwall.dto.UserSearchResult;
 import online.xzjob.schoolwall.dto.ScUserSetting;
 import online.xzjob.schoolwall.entity.ScUsers;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 import java.util.List;
 
@@ -19,6 +24,10 @@ public interface ScUsersMapper extends BaseMapper<ScUsers> {
     @Select("SELECT id, username, email FROM sc_users WHERE id = #{id} ")
     ScUserDTO selectUserByIdWithoutPassword(Integer id);
 
+    @Select("SELECT u.user_id, u.user_name, a.avatar_url " +
+            "FROM sc_users u LEFT JOIN sc_user_avatars a ON u.user_id = a.user_id " +
+            "WHERE u.user_name LIKE CONCAT('%', #{query}, '%') OR u.user_email LIKE CONCAT('%', #{query}, '%')")
+    List<UserSearchResult> selectUserSearchResults(@Param("query") String query);
     @Select("select user_id,user_name,user_role from sc_users")
     List<ScUserSetting> selectAllUser();
 

@@ -2,6 +2,7 @@ package online.xzjob.schoolwall.controller;
 
 import online.xzjob.schoolwall.dto.ScUserDTO;
 import online.xzjob.schoolwall.dto.ScUserSetting;
+import online.xzjob.schoolwall.dto.UserSearchResult;
 import online.xzjob.schoolwall.entity.ScUsers;
 import online.xzjob.schoolwall.service.IScUsersService;
 import online.xzjob.schoolwall.util.OperationResult;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import java.util.List;
 
 /**
  * <p>
@@ -65,6 +68,11 @@ public class ScUsersController {
     @PostMapping("/update_UserInfo")
     public OperationResult<ScUserDTO> updateUserInfo(@RequestBody ScUsers scUsers) {
         return scUsersService.updateUserInfo(scUsers);
+    }
+
+    @GetMapping("/searchUsers")
+    public OperationResult<List<UserSearchResult>> searchUsers(@RequestParam String query) {
+        return scUsersService.searchUsers(query);
     }
 
     @PostMapping("/queryAllUser")
