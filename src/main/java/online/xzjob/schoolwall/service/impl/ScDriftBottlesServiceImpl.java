@@ -79,8 +79,7 @@ public class ScDriftBottlesServiceImpl extends ServiceImpl<ScDriftBottlesMapper,
     @Autowired
     private QiniuUploadService qiniuUploadService = null;
 
-    @Autowired
-    private ScDriftBottlesMapper scDriftBottlesMapper;
+
 
     @Autowired
     private ScUsersServiceImpl usersService = null;

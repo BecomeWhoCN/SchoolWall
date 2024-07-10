@@ -353,4 +353,30 @@ public class ScUsersServiceImpl extends ServiceImpl<ScUsersMapper, ScUsers> impl
         List<UserSearchResult> results = scUsersMapper.selectUserSearchResults(query);
         return new OperationResult<>(true, "搜索成功", results);
     }
+
+    public List<ScUserSetting> findAllUsers(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return scUsersMapper.findAllUsers(offset, pageSize);
+    }
+
+    public int countTotalUsers() {
+        return scUsersMapper.countTotalUsers();
+
+
+    }
+
+    public Boolean increasePermission(Integer id) {
+        if (scUsersMapper.increasePermission(id)==1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public Boolean decreasePermission(Integer id) {
+        if (scUsersMapper.decreasePermission(id)==1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

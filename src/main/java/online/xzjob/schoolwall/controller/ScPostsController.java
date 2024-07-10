@@ -36,7 +36,7 @@ import java.util.List;
 @RequestMapping("/api/scPosts")
 public class ScPostsController {
     @Autowired
-    private IScPostsService sc;
+    private IScPostsService scPostsService;
 
     @PostMapping("saveDraft")
     @ResponseBody
@@ -49,11 +49,11 @@ public class ScPostsController {
                                                String postHeaderImageUrl,
                                                String postContentUrl ) {
         OperationResult<Integer> rf = null;
-        //对文件对象进行@JsonIgnore处理
+        //对文件对象进行@JsonIgnore处理，文章对象的数据添加，如果String类型不存在对应的值，那就是undifined的字符串，文件不存在则为null值。
         ScPostsDTO scPostsDTO = ScPostsDTO.builder()
                 .editorContent(editorContent)
                 .imageFile(imageFile).build();
-        //文章对象的数据添加
+        //文章对象的数据添加，如果String类型不存在对应的值，那就是undifined的字符串。
         ScPosts scPosts= ScPosts.builder()
                 . userId(Integer.valueOf(userId))
                 . postTitle(postTitle)
@@ -66,9 +66,9 @@ public class ScPostsController {
         //存储数据
         if(scPosts.getPostId()==0) {
             //存储数据
-            rf = sc.savearticle(scPosts, scPostsDTO);
+            rf = scPostsService.savearticle(scPosts, scPostsDTO);
         }else {
-            rf=sc.updatearticle(scPosts,scPostsDTO);
+            rf=scPostsService.updatearticle(scPosts,scPostsDTO);
         }
         return rf;
     }
@@ -85,11 +85,11 @@ public class ScPostsController {
                                                    String postContentUrl ) {
 
         OperationResult<Integer> rf = null;
-        //对文件对象进行@JsonIgnore处理
+        //对文件对象进行@JsonIgnore处理防止文件格式转换，文件不存在则为null值。
         ScPostsDTO scPostsDTO = ScPostsDTO.builder()
                 .editorContent(editorContent)
                 .imageFile(imageFile).build();
-        //文章对象的数据添加
+        //文章对象的数据添加，如果String类型不存在对应的值，那就是undifined的字符串。
         ScPosts scPosts= ScPosts.builder()
                 . userId(Integer.valueOf(userId))
                 . postTitle(postTitle)
@@ -102,9 +102,9 @@ public class ScPostsController {
         //存储数据
         if(scPosts.getPostId()==0) {
             //存储数据
-            rf = sc.savearticle(scPosts, scPostsDTO);
+            rf = scPostsService.savearticle(scPosts, scPostsDTO);
         }else {
-            rf=sc.updatearticle(scPosts,scPostsDTO);
+            rf=scPostsService.updatearticle(scPosts,scPostsDTO);
         }
         return rf;
     }
@@ -112,14 +112,14 @@ public class ScPostsController {
     @ResponseBody
     public OperationResult<List<ScPosts>> selectArticleAll(@RequestParam("userId") String userId) {
         OperationResult<List<ScPosts>> rf = null;
-        rf=sc.selectArticleAll(Integer.valueOf(userId));
+        rf=scPostsService.selectArticleAll(Integer.valueOf(userId));
         return rf;
     }
     @PostMapping("selectDraftAll")
     @ResponseBody
     public OperationResult<List<ScPosts>> selectDraftAll(@RequestParam("userId") String userId) {
         OperationResult<List<ScPosts>> rf = null;
-        rf=sc.selectDraftAll(Integer.valueOf(userId));
+        rf=scPostsService.selectDraftAll(Integer.valueOf(userId));
         return rf;
     }
     @PostMapping("backDraft")
@@ -127,7 +127,7 @@ public class ScPostsController {
     public OperationResult<Integer> backDraft(@RequestParam("postId") Integer postId) {
 
         OperationResult<Integer> rf = null;
-        rf=sc.backDraft(postId);
+        rf=scPostsService.backDraft(postId);
         return rf;
     }
     @PostMapping("releaseArticle")
@@ -135,7 +135,7 @@ public class ScPostsController {
     public OperationResult<Integer> releaseArticle(@RequestParam("postId") Integer postId) {
 
         OperationResult<Integer> rf = null;
-        rf=sc.releaseArticle(postId);
+        rf=scPostsService.releaseArticle(postId);
         return rf;
     }
     @PostMapping("deleteArticle")
@@ -150,7 +150,7 @@ public class ScPostsController {
                 . postHeaderImageUrl(postHeaderImageUrl)
                 .build();
         OperationResult<Integer> rf = null;
-        rf=sc.deleteArticle(scPosts);
+        rf=scPostsService.deleteArticle(scPosts);
 
         return rf;
     }
@@ -159,13 +159,12 @@ public class ScPostsController {
     public OperationResult<ScPostsDTO> selectOne(
               @RequestParam("postId") Integer postId) {
         OperationResult<ScPostsDTO> rf = null;
-        rf=sc.selectOne(postId);
+        rf=scPostsService.selectOne(postId);
         System.out.println(rf);
         return rf;
     }
 
-    @Autowired
-    private IScPostsService scPostsService;
+
     @PostMapping("/queryAllReportedPosts")
     public OperationResult<Map<String, Object>> queryReportedPosts(@RequestBody Map<String, Integer> params) {
         OperationResult<Map<String, Object>> result = new OperationResult<>() {

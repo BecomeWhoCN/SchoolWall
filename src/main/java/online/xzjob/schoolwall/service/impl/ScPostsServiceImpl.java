@@ -60,6 +60,7 @@ public class ScPostsServiceImpl extends ServiceImpl<ScPostsMapper, ScPosts> impl
     private void extracted(ScPosts scPosts, ScPostsDTO scPostsDTO) throws IOException {
         MultipartFile editorContent = scPostsDTO.getEditorContent();
         String editorUrl=null;
+        //看文章内容不为空则添加
         if(editorContent!=null){
             byte[] editorContentBytes = editorContent.getBytes();
             String editorContentName= editorContent.getOriginalFilename();
@@ -69,6 +70,7 @@ public class ScPostsServiceImpl extends ServiceImpl<ScPostsMapper, ScPosts> impl
         //上传图片到七牛云
         MultipartFile postImage = scPostsDTO.getImageFile();
         String postImageUrl=null;
+        //图片内容不为空才添加
         if(postImage!=null){
             //转为字节数组传送
             byte[] postImageBytes = postImage.getBytes();
@@ -148,9 +150,13 @@ public class ScPostsServiceImpl extends ServiceImpl<ScPostsMapper, ScPosts> impl
     public OperationResult<Integer> deleteArticle(ScPosts scPosts) {
         OperationResult<Integer> rf=null;
         try{
-            //删除
-            qiniuUploadService.deleteFile(scPosts.getPostHeaderImageUrl());
+            //删除,因为前端传来的数据就是undefined，如果经过文件上传会返回文件路径进行覆盖，如果没有文件上传则为undefined。
+            if(!scPosts.getPostHeaderImageUrl().equals("undefined")){
+            qiniuUploadService.deleteFile(scPosts.getPostHeaderImageUrl());}
+            //基本不会出现null的情况，加上去存存就是心理作用。
+            if(scPosts.getPostContentUrl()!=null){
             qiniuUploadService.deleteFile(scPosts.getPostContentUrl());
+            }
             int i =scPostsMapper.deleteArticle(scPosts.getPostId());
             rf = new OperationResult<>(true, "删除成功", i);
             return rf;
@@ -165,29 +171,34 @@ public class ScPostsServiceImpl extends ServiceImpl<ScPostsMapper, ScPosts> impl
     public OperationResult<Integer> updatearticle(ScPosts scPosts, ScPostsDTO scPostsDTO) {
         OperationResult<Integer> rf=null;
         try {
-             if(scPostsDTO.getImageFile()!=null){
-                 if(scPosts.getPostHeaderImageUrl()!=null){
+
+             if(scPostsDTO.getImageFile()!=null ){ //当存在新图片上传的时候
+                 //当原本的内容存在图片的地址，就是存在图片的时候，删除原来图片。当没有图片的时候，PostHeaderImageUrl就是后端传来的undifined字符串。
+                 if( !scPosts.getPostHeaderImageUrl().equals("undefined")){
+                     System.out.println(scPosts.getPostHeaderImageUrl());
+                     System.out.println("删除图片");
                      qiniuUploadService.deleteFile(scPosts.getPostHeaderImageUrl());
                  }
-                 if(scPosts.getPostContentUrl()!=null) {
+                 //当文章存在对应的内容地址的时候。删除原来的内容，添加新的内容。基本不会出现，因为上传md文件必定会添加地址，哪怕md文件内容为空，但是md文件不为空。
+                 if(!scPosts.getPostContentUrl().equals("undefined")) {
                      qiniuUploadService.deleteFile(scPosts.getPostContentUrl());
                  }
                  extracted(scPosts, scPostsDTO);
 
              }else{
-                 if(scPosts.getPostContentUrl()!=null) {
+                 System.out.println("上传图片为空了");
+                 //心理作用，基本不会出现，因为md文件哪怕内容为空，但是md文件不为空，即返回的地址也会覆盖PostContentUrl。
+                 if(!scPosts.getPostContentUrl().equals("undefined")) {
                      qiniuUploadService.deleteFile(scPosts.getPostContentUrl());
                  }
                  MultipartFile editorContent = scPostsDTO.getEditorContent();
                  String editorUrl=null;
-                 if(editorContent!=null){
-                     byte[] editorContentBytes = editorContent.getBytes();
-                     String editorContentName= editorContent.getOriginalFilename();
-                     editorUrl = qiniuUploadService.uploadFile(editorContentBytes, editorContentName,"scPosts/markdown");
-                     scPosts.setPostContentUrl(editorUrl);
-                 }else{
-                     scPosts.setPostContentUrl(null);
-                 }
+                 //md文件上传上来，哪怕什么都不写都不会为空
+                 byte[] editorContentBytes = editorContent.getBytes();
+                 String editorContentName= editorContent.getOriginalFilename();
+                 editorUrl = qiniuUploadService.uploadFile(editorContentBytes, editorContentName,"scPosts/markdown");
+                 scPosts.setPostContentUrl(editorUrl);
+
 
              }
             System.out.println(scPosts.getPostStatus()+"------------------------------------------------------");
@@ -212,8 +223,7 @@ public class ScPostsServiceImpl extends ServiceImpl<ScPostsMapper, ScPosts> impl
              return rf;
          }
     }
-    @Autowired
-    private ScPostsMapper scPostsMapper;
+
 
     @Override
     public List<ScReportedPostDTO> findAllReportedPosts(int page, int pageSize) {
