@@ -65,6 +65,10 @@ public class ScUsersServiceImpl extends ServiceImpl<ScUsersMapper, ScUsers> impl
 
         // 如果不存在，创建新用户
         user.setUserRole("USER");
+        user.setUserOnlineStatus("online");
+
+        // 创建这个用户
+        scUsersMapper.insert(user);
         // 设置其他属性...
 
         // 构建返回的 DTO
